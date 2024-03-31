@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSquarePlus } from "react-icons/fa6";
 import Modal from "./Modal";
@@ -6,7 +6,7 @@ import UserStoryForm from "./UserStoryForm";
 import IterationForm from "./IterationForm";
 import ReleaseForm from "./ReleaseForm";
 import { BsSearch } from "react-icons/bs";
-import Filter from "./Filter";
+// import Filter from "./Filter";
 import {
   BarChart,
   Bar,
@@ -239,30 +239,68 @@ function Space() {
     { name: "Page F", uv: 2390, pv: 3800, amt: 2500 },
     { name: "Page G", uv: 3490, pv: 4300, amt: 2100 },
   ];
-  const [iterSearch, setIterSearch] = useState([]);
-  const fakeData = [
-    { _id: 1, name: "reema", objective: "kkkk" },
-    { _id: 2, name: "meow", objective: "why" },
-    { _id: 3, name: "hii", objective: "woop woop" },
-    { _id: 4, name: "funny", objective: "reac" },
-  ];
-  const iterResult = (e) => {
-    const results = fakeData.filter((item) => {
-      return e != "" ? item.name.includes(e) : "";
-    });
-    setIterSearch(results);
-  };
+  // const [iterSearch, setIterSearch] = useState([]);
+  // const fakeData = [
+  //   { _id: 1, name: "reema", objective: "kkkk" },
+  //   { _id: 2, name: "meow", objective: "why" },
+  //   { _id: 3, name: "hii", objective: "woop woop" },
+  //   { _id: 4, name: "funny", objective: "reac" },
+  // ];
+  // const iterResult = (value) => {
+  //   setIterSearch(value);
+  // };
+  // const results = fakeData.filter((item) => {
+  //   return e != "" ? item.name.includes(e) : "";
+  // });
+  // console.log(iterSearch)
   // JSX for the Space component
   
-  const [cards, setcards] = useState([
-    // Initialize your card data here
-    { id: 1, category: "User Story", name: "Card 1" },
-    { id: 2, category: "Iteration", name: "Card 2" },
-    { id: 3, category: "Release", name: "Card 3" },
-    // Add more cards as needed
-  ]);
+  // const [cards, setcards] = useState([
+  //   // Initialize your card data here
+  //   { id: 1, category: "User Story", name: "Card 1" },
+  //   { id: 2, category: "Iteration", name: "Card 2" },
+  //   { id: 3, category: "Release", name: "Card 3" },
+  //   // Add more cards as needed
+  // ]);
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const [selectedFilters, setSelectedFilters] = useState(["All"]);
+  
+    let filters = ["All", "User Story", "Iteration", "Release"];
+  
+    const handleFilterButtonClick = (selectedCategory) => {
+      if (selectedFilters.includes(selectedCategory)) {
+        setSelectedFilters(selectedFilters.filter((el) => el !== selectedCategory));
+      } else {
+        setSelectedFilters([...selectedFilters, selectedCategory]);
+      }
+    };
+
+
+    const [iterSearch, setIterSearch] = useState([]);
+    const [userSearch, setUserSearch] = useState([]);
+    const [releaseSearch, setRelSearch] = useState([]);
+
+
+
+    
   return (
     <main className="main-container">
       {/* Modal for User Story Form */}
@@ -287,15 +325,42 @@ function Space() {
       <div className="main-title">
         <h3>DASHBOARD</h3>
 
-        <Filter cards={cards}/>
+        {/* <Filter cards={cards}/> */}
+        {/***********************************************/}
+
+
+      <div>
+        <div className="buttons-container">
+          {filters.map((category, idx) => (
+            <button
+              onClick={() => handleFilterButtonClick(category)}
+              className={`button ${selectedFilters.includes(category) ? "active" : ""}`}
+              key={`filters-${idx}`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
+{/* {console.log(filteredCards.map((j) => j[0]))} */}
+
+        {/**************************************************/}
 
       </div>
       {/* User Stories Card */}
       <div className="main-cards">
+        {selectedFilters.includes("User Story") || selectedFilters.includes("All") ?
         <div className="card">
           <div className="search-box">
             <BsSearch className="icon" />
-            <input type="text" placeholder="Search..." />
+            <input type="text" placeholder="Search..." 
+            
+            onChange={(e) => {
+              setUserSearch(e.target.value);
+            }}
+            
+            />
+            
           </div>
           <div className="card-inner">
             <h3>User Stories</h3>
@@ -309,6 +374,7 @@ function Space() {
           {/* List of User Stories */}
           <ul>
             {userStories.map((userStory) => (
+              userStory.name.includes(userSearch)?
               <li key={userStory._id}>
                 {/* Link to User Story Details */}
                 <Link
@@ -318,17 +384,20 @@ function Space() {
                 </Link>
                 {/* Add Delete Icon */}
                 <span onClick={() => handleDeleteUserStory(userStory._id)}>
-                  🗑
+                  ًں—‘
                 </span>
                 {/* Add Edit Icon */}
                 <span onClick={() => handleEditUserStory(userStory._id)}>
-                  ✏
+                  âœڈ
                 </span>
               </li>
+              :
+              ""
             ))}
           </ul>
         </div>
-        {/* Iterations Card */}
+        : ""}
+        {selectedFilters.includes("Iteration") || selectedFilters.includes("All")?
         <div className="card">
           <div>
             <div className="search-box">
@@ -336,31 +405,12 @@ function Space() {
               <input
                 type="text"
                 onChange={(e) => {
-                  iterResult(e.target.value);
+                  setIterSearch(e.target.value);
                 }}
                 placeholder="Search..."
               />
             </div>
-            <ul className="d-block">
-              {iterSearch.map((iteration) => (
-                <li key={iteration._id}>
-                  {/* Link to Iteration Details */}
-                  <Link
-                    to={`/iterations/${iteration._id}`}
-                    onClick={() => navigate(`/iterations/${iteration._id}`)}>
-                    {`${iteration.name} - ${iteration.objective}`}
-                  </Link>
-                  {/* Add Delete Icon */}
-                  <span onClick={() => handleDeleteIteration(iteration._id)}>
-                    🗑
-                  </span>
-                  {/* Add Edit Icon */}
-                  <span onClick={() => handleEditIteration(iteration._id)}>
-                    ✏
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {/* here */}
           </div>
           <div className="card-inner">
             <h3>Iteration</h3>
@@ -372,7 +422,8 @@ function Space() {
           </div>
           {/* List of Iterations */}
           <ul>
-            {fakeData.map((iteration) => (
+            {iterations.map((iteration) => (
+              iteration.name.includes(iterSearch)?
               <li key={iteration._id}>
                 {/* Link to Iteration Details */}
                 <Link
@@ -382,21 +433,30 @@ function Space() {
                 </Link>
                 {/* Add Delete Icon */}
                 <span onClick={() => handleDeleteIteration(iteration._id)}>
-                  🗑
+                  ًں—‘
                 </span>
                 {/* Add Edit Icon */}
                 <span onClick={() => handleEditIteration(iteration._id)}>
-                  ✏
+                  âœڈ
                 </span>
               </li>
+              :
+              ""
             ))}
           </ul>
         </div>
-        {/* Releases Card */}
+        : ""}
+        {selectedFilters.includes("Release") || selectedFilters.includes("All")?
         <div className="card">
           <div className="search-box">
             <BsSearch className="icon" />
-            <input type="text" placeholder="Search..." />
+            <input type="text" placeholder="Search..." 
+            
+            onChange={(e) => {
+              setRelSearch(e.target.value);
+            }}
+            
+            />
           </div>
           <div className="card-inner">
             <h3>Release</h3>
@@ -409,6 +469,7 @@ function Space() {
           {/* List of Releases */}
           <ul>
             {releases.map((release) => (
+              release.name.includes(releaseSearch)?
               <li key={release._id}>
                 {/* Link to Release Details */}
                 <Link
@@ -417,13 +478,17 @@ function Space() {
                   {`${release.name} - ${release.objective}`}
                 </Link>
                 {/* Add Delete Icon */}
-                <span onClick={() => handleDeleteRelease(release._id)}>🗑</span>
+                <span onClick={() => handleDeleteRelease(release._id)}>ًں—‘</span>
                 {/* Add Edit Icon */}
-                <span onClick={() => handleEditRelease(release._id)}>✏</span>
+                <span onClick={() => handleEditRelease(release._id)}>âœڈ</span>
               </li>
+              :
+              ""
             ))}
           </ul>
         </div>
+        : ""
+        }
       </div>
       {/* Charts */}
       <div className="charts">
